@@ -20,7 +20,7 @@ async function deployFixture() {
 describe("Counter", function () {
   let signers: Signers;
   let counterContract: Counter;
-  let counterContractAddress: Counter;
+  let counterContractAddress: string; // ✅ Perbaikan disini
 
   before(async function () {
     const ethSigners: HardhatEthersSigner[] = await ethers.getSigners();
@@ -39,28 +39,26 @@ describe("Counter", function () {
   });
 
   it("count should be zero after deployment", async function () {
-  const count = await counterContract.getCount();
-  console.log(`Counter.getCount() === ${count}`);
-  // Expect initial count to be 0 after deployment
-  expect(count).to.eq(0);
+    const count = await counterContract.getCount();
+    console.log(`Counter.getCount() === ${count}`);
+    expect(count).to.eq(0);
   });
 
   it("increment the counter by 1", async function () {
-  const countBeforeInc = await counterContract.getCount();
-  const tx = await counterContract.connect(signers.alice).increment(1);
-  await tx.wait();
-  const countAfterInc = await counterContract.getCount();
-  expect(countAfterInc).to.eq(countBeforeInc + 1n);
+    const countBeforeInc = await counterContract.getCount();
+    const tx = await counterContract.connect(signers.alice).increment(1);
+    await tx.wait();
+    const countAfterInc = await counterContract.getCount();
+    expect(countAfterInc).to.eq(countBeforeInc + 1n);
   });
 
   it("decrement the counter by 1", async function () {
-  // First increment, count becomes 1
-  let tx = await counterContract.connect(signers.alice).increment(1);
-  await tx.wait();
-  // Then decrement, count goes back to 0
-  tx = await counterContract.connect(signers.alice).decrement(1);
-  await tx.wait();
-  const count = await counterContract.getCount();
-  expect(count).to.eq(0);
+    let tx = await counterContract.connect(signers.alice).increment(1);
+    await tx.wait();
+
+    tx = await counterContract.connect(signers.alice).decrement(1);
+    await tx.wait();
+    const count = await counterContract.getCount();
+    expect(count).to.eq(0);
   });
 });
